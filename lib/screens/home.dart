@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_class/controllers/theme_mode_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,31 +10,67 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //YOU WOULD MOVE YOUR VARIABLE INSIDE THE PROVIDER CLASS
-  //HERE YOU WILL CREATE YOUR INSTANCE OF THE PROVIDER CLASS
-  Color primaryColor = Colors.orange;
-  Color backgroundColor = Colors.white;
-  var iconFloatingElevationButton = const Icon(Icons.mode_night);
+  int indexWidgets = 0;
 
   @override
   Widget build(BuildContext context) {
+    final modeThemeProvider = Provider.of<ThemeModeProvider>(context);
+
+    if(modeThemeProvider.stateDay){
+      indexWidgets = 0;
+    }else{
+      indexWidgets = 1;
+    }
+
+    final List<Text> _titleWidget = <Text>[
+      Text(
+        "Day",
+        style: TextStyle(color: modeThemeProvider.textColor),
+      ),
+      Text(
+        "Night",
+        style: TextStyle(color: modeThemeProvider.textColor),
+      ),
+    ];
+
+    final List<Widget> _greetingWidget = <Widget>[
+      Center(
+          child: Text(
+        "Good Day",
+        style: TextStyle(color: modeThemeProvider.textColor, fontSize: 25, fontWeight: FontWeight.w700),
+      )),
+      Center(
+          child: Text(
+        "Good Evening",
+        style: TextStyle(color: modeThemeProvider.textColor,fontSize: 25, fontWeight: FontWeight.w700),
+      )),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         //THIS VARIABLE WILL CHANGE IT STATE
-        backgroundColor: primaryColor,
+        title: _titleWidget.elementAt(indexWidgets),
+        centerTitle: true,
+        backgroundColor: modeThemeProvider.primaryColor,
       ),
       body: Container(
         //THIS VARIABLE WILL CHANGE IT STATE
-        color: backgroundColor,
+        color: modeThemeProvider.backgroundColor,
+        child: _greetingWidget.elementAt(indexWidgets),
       ),
       floatingActionButton: FloatingActionButton(
           //THIS VARIABLE WILL CHANGE IT STATE
-          backgroundColor: primaryColor,
+          backgroundColor: modeThemeProvider.primaryColor,
           //THIS VARIABLE WILL CHANGE IT STATE
-          child: iconFloatingElevationButton,
+          child: modeThemeProvider.iconFloatingElevation,
           onPressed: () {
             //HERE YOU WOULD CALL YOUR INSTANCE.YOURFUNCTION
             // DONT FORGET TO ADD THE IF STATEMENT
+            if (modeThemeProvider.stateDay) {
+              modeThemeProvider.changeThemeToNight();
+            } else {
+              modeThemeProvider.changeThemeToDay();
+            }
           }),
     );
   }
